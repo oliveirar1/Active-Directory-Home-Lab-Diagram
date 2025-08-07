@@ -91,48 +91,46 @@ Configure hostname, atualizações e crie snapshots.
 
 ### 3. Configurar o Servidor como DC
 ```powershell
-Install-WindowsFeature AD-Domain-Services, DNS, DHCP, RemoteAccess -IncludeManagementTools.
-
----
-
+Install-WindowsFeature AD-Domain-Services, DNS, DHCP, RemoteAccess -IncludeManagementTools
+```
 ### 4. Promover o DC
 
 Install-ADDSForest -DomainName "lab-ronaldo.com"
 
+
 ---
 
 ### 5. Configurar DHCP
-Scope: 172.16.0.100-200
+Scope: `172.16.0.100-200`
+DNS: `172.16.0.1`
+Gateway: `172.16.0.1`
 
-DNS: 172.16.0.1
-
-Gateway: 172.16.0.1
 
 ---
 
 ### 6. Configurar NAT com RRAS
 Use o assistente do "Routing and Remote Access" para ativar NAT da NIC externa para a interna.
 
-7. Ingressar Cliente no Domínio
+### 7. Ingressar Cliente no Domínio
 No Windows 10:
 
 Sistema > Nome do Computador > Alterar > Ingressar domínio: lab-ronaldo.com
 
 ---
 
-🧪 Script PowerShell: Criar +1000 Usuários
+### 🧪 Script PowerShell: Criar +1000 Usuários
 
 for ($i=1; $i -le 1000; $i++) {
     $username = "user$i"
     New-ADUser -Name $username -SamAccountName $username -AccountPassword (ConvertTo-SecureString "P@ssword123" -AsPlainText -Force) -Enabled $true
 }
 
-💾 Salvar como create-users.ps1 e executar no PowerShell com permissões administrativas.
+### 💾 Salvar como create-users.ps1 e executar no PowerShell com permissões administrativas.
 
 📘 Referências
 Documentação Microsoft AD DS
 VirtualBox Manual
 PowerShell AD Module
 
-🔐 Segurança
+### 🔐 Segurança
 Este ambiente não é seguro para produção. Use apenas para fins educacionais em redes isoladas.

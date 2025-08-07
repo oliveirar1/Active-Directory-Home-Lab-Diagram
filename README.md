@@ -97,3 +97,26 @@ Configure hostname, atualizações e crie snapshots.
 ### 3. Configurar o Servidor como DC
 ```powershell
 Install-WindowsFeature AD-Domain-Services, DNS, DHCP, RemoteAccess -IncludeManagementTools
+
+---
+
+### 4. Promover o DC
+
+Install-ADDSForest -DomainName "lab-ronaldo.com"
+
+5. Configurar DHCP
+Scope: 172.16.0.100-200
+
+DNS: 172.16.0.1
+
+Gateway: 172.16.0.1
+
+6. Configurar NAT com RRAS
+Use o assistente do "Routing and Remote Access" para ativar NAT da NIC externa para a interna.
+
+7. Ingressar Cliente no Domínio
+No Windows 10:
+
+Sistema > Nome do Computador > Alterar > Ingressar domínio: lab-ronaldo.com
+
+

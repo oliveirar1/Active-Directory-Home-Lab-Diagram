@@ -70,7 +70,7 @@ Laboratório virtual completo com Windows Server 2019 e Windows 10 para praticar
 | NIC         | Interna (InternalNetwork)     |
 | DHCP        | Automático (via DC)           |
 
-Depois de configurar a rede, a máquina será ingressada no domínio `lab-ronaldo.com`.
+Depois de configurar a rede, a máquina será ingressada no domínio `xxx-ronaldo.com`.
 
 ---
 
@@ -91,7 +91,7 @@ Install-WindowsFeature AD-Domain-Services, DNS, DHCP, RemoteAccess -IncludeManag
 ### 4. Promover o DC
 
 ```powershell
-Install-ADDSForest -DomainName "lab-ronaldo.com"
+Install-ADDSForest -DomainName "xxx-ronaldo.com"
 ```
 
 ### 5. Configurar o DHCP
@@ -108,7 +108,7 @@ Use o assistente do **Routing and Remote Access** e ative NAT da NIC externa par
 No Windows 10:
 
 ```text
-Sistema > Nome do Computador > Alterar > Domínio: lab-ronaldo.com
+Sistema > Nome do Computador > Alterar > Domínio: xxx-ronaldo.com
 ```
 
 ---
@@ -116,11 +116,29 @@ Sistema > Nome do Computador > Alterar > Domínio: lab-ronaldo.com
 ## 🧪 Script PowerShell - Criar 1000+ Usuários
 
 ```powershell
-for ($i=1; $i -le 1000; $i++) {
-    $username = "user$i"
-    New-ADUser -Name $username -SamAccountName $username `
-        -AccountPassword (ConvertTo-SecureString "P@ssword123" -AsPlainText -Force) `
-        -Enabled $true
+# ----- Edit these Variables for your own Use Case ----- #
+$PASSWORD_FOR_USERS   = "Password1"
+$USER_FIRST_LAST_LIST = Get-Content .\names.txt
+# ------------------------------------------------------ #
+
+$password = ConvertTo-SecureString $PASSWORD_FOR_USERS -AsPlainText -Force
+New-ADOrganizationalUnit -Name _USERS -ProtectedFromAccidentalDeletion $false
+
+foreach ($n in $USER_FIRST_LAST_LIST) {
+    $first = $n.Split(" ")[0].ToLower()
+    $last = $n.Split(" ")[1].ToLower()
+    $username = "$($first.Substring(0,1))$($last)".ToLower()
+    Write-Host "Creating user: $($username)" -BackgroundColor Black -ForegroundColor Cyan
+    
+    New-AdUser -AccountPassword $password `
+               -GivenName $first `
+               -Surname $last `
+               -DisplayName $username `
+               -Name $username `
+               -EmployeeID $username `
+               -PasswordNeverExpires $true `
+               -Path "ou=_USERS,$(([ADSI]`"").distinguishedName)" `
+               -Enabled $true
 }
 ```
 

@@ -94,9 +94,9 @@ Configure hostname, atualizações e crie snapshots.
 Install-WindowsFeature AD-Domain-Services, DNS, DHCP, RemoteAccess -IncludeManagementTools
 ```
 ### 4. Promover o DC
-
+````
 Install-ADDSForest -DomainName "lab-ronaldo.com"
-
+````
 
 ---
 

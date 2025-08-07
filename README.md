@@ -32,7 +32,7 @@ Este projeto configura um laboratório caseiro para aprender e testar o Active D
 
 ## 🧩 Arquitetura da Rede
 
-![Diagrama da Rede](./diagram/home-lab-ad.png)
+![Diagrama da Rede](https://i.imgur.com/V5Ws8OK.png)
 
 ### 🌐 Redes
 
@@ -94,7 +94,7 @@ Configure ambas com NICs conforme diagrama.
 ### 2. Instalar Windows Server 2019 e Windows 10
 Configure hostname, atualizações e crie snapshots.
 
-# 3. Configurar o Servidor como DC
+### 3. Configurar o Servidor como DC
 ```powershell
 Install-WindowsFeature AD-Domain-Services, DNS, DHCP, RemoteAccess -IncludeManagementTools.
 
@@ -104,14 +104,18 @@ Install-WindowsFeature AD-Domain-Services, DNS, DHCP, RemoteAccess -IncludeManag
 
 Install-ADDSForest -DomainName "lab-ronaldo.com"
 
-5. Configurar DHCP
+---
+
+### 5. Configurar DHCP
 Scope: 172.16.0.100-200
 
 DNS: 172.16.0.1
 
 Gateway: 172.16.0.1
 
-6. Configurar NAT com RRAS
+---
+
+### 6. Configurar NAT com RRAS
 Use o assistente do "Routing and Remote Access" para ativar NAT da NIC externa para a interna.
 
 7. Ingressar Cliente no Domínio

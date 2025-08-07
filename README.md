@@ -94,13 +94,13 @@ Configure ambas com NICs conforme diagrama.
 ### 2. Instalar Windows Server 2019 e Windows 10
 Configure hostname, atualizações e crie snapshots.
 
-### 3. Configurar o Servidor como DC
+# 3. Configurar o Servidor como DC
 ```powershell
 Install-WindowsFeature AD-Domain-Services, DNS, DHCP, RemoteAccess -IncludeManagementTools.
 
 ---
 
-4. Promover o DC
+### 4. Promover o DC
 
 Install-ADDSForest -DomainName "lab-ronaldo.com"
 

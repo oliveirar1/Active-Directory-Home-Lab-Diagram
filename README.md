@@ -1,10 +1,5 @@
-# Active Directory Home Lab Diagram
-Domain Controller &amp; Client Network
-<p>
-  <img src="https://i.imgur.com/V5Ws8OK.png" height="50%" width="50%" alt="Disk Sanitization Steps"/>
-</p>
-
 # 🏠 Home Lab: Active Directory + DHCP + DNS + NAT
+Domain Controller &amp; Client Network
 
 Este projeto configura um laboratório caseiro para aprender e testar o Active Directory com Windows Server 2019 e um cliente Windows 10 em uma rede virtual interna.
 

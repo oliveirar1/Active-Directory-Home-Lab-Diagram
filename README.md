@@ -1,136 +1,144 @@
 # 🏠 Home Lab: Active Directory + DHCP + DNS + NAT
-Domain Controller &amp; Client Network
 
-Este projeto configura um laboratório caseiro para aprender e testar o Active Directory com Windows Server 2019 e um cliente Windows 10 em uma rede virtual interna.
-
----
-
-## 📌 Objetivos
-
-- Criar um controlador de domínio (DC)
-- Configurar DNS, DHCP e NAT no mesmo servidor
-- Ingressar cliente Windows 10 no domínio
-- Criar +1.000 usuários via PowerShell
+Laboratório virtual completo com Windows Server 2019 e Windows 10 para praticar e testar Active Directory, DNS, DHCP e NAT usando VirtualBox.
 
 ---
 
-## 🧱 Requisitos
+## 🎯 Objetivos
 
-- [VirtualBox](https://www.virtualbox.org/)
+- 🖥️ Criar um Controlador de Domínio (Domain Controller)
+- 🌐 Configurar DNS, DHCP e NAT no servidor
+- 💻 Ingressar uma VM cliente Windows 10 no domínio
+- 🔄 Criar +1000 usuários automaticamente via PowerShell
+
+---
+
+## 📦 Requisitos
+
+- VirtualBox
 - ISOs:
   - Windows Server 2019
   - Windows 10
-- 8 GB RAM ou mais
-- 50 GB de espaço livre
+- 💾 50 GB de espaço livre em disco
+- 🧠 8 GB de RAM (mínimo)
 
 ---
 
-## 🧩 Arquitetura da Rede
-
-![Diagrama da Rede](https://i.imgur.com/V5Ws8OK.png)
-
-### 🌐 Redes
+## 🗺️ Arquitetura de Rede
 
 | Rede       | Tipo      | Subnet         | DHCP         |
 |------------|-----------|----------------|--------------|
-| Internet   | NAT/Bridge| (via roteador) | automático   |
 | Interna AD | Interna   | 172.16.0.0/24  | Servidor DC  |
+| Internet   | NAT/Bridge| (via roteador) | Automático   |
+
+> Veja o diagrama abaixo:
+![Diagrama da Rede](https://i.imgur.com/V5Ws8OK.png)
 
 ---
 
-## 🖥️ Configuração das Máquinas
+## 🛠️ Configuração das Máquinas Virtuais
 
-### 🔹 VM 1 - Windows Server 2019
+### 🔹 VM 1 - Windows Server 2019 (Domain Controller)
 
-| Configuração | Valor |
-|--------------|-------|
-| CPU          | 2     |
-| RAM          | 4 GB  |
-| NIC 1        | NAT ou Bridge (Internet) |
-| NIC 2        | Interna (InternalNetwork) |
+| Recurso     | Valor                         |
+|-------------|-------------------------------|
+| CPU         | 2 vCPU                        |
+| RAM         | 4 GB                          |
+| NIC 1       | NAT ou Bridge (Internet)      |
+| NIC 2       | Interna (InternalNetwork)     |
+| Funções     | AD DS, DNS, DHCP, RRAS        |
 
-#### Funções Instaladas
-- Active Directory Domain Services
-- DNS Server
-- DHCP Server
-- Routing and Remote Access (RRAS)
-
-#### Endereçamento Interno (NIC 2)
+#### 🧭 Endereço da NIC Interna
 - IP: `172.16.0.1`
 - Máscara: `255.255.255.0`
-- Gateway: *vazio*
+- Gateway: *(vazio)*
 - DNS: `127.0.0.1`
 
-#### DHCP Scope
+#### 🎯 Escopo DHCP
 - Range: `172.16.0.100 - 172.16.0.200`
 - Gateway: `172.16.0.1`
 - DNS: `172.16.0.1`
 
 ---
 
-### 🔹 VM 2 - Windows 10
+### 🔹 VM 2 - Windows 10 (Cliente)
 
-| Configuração | Valor |
-|--------------|-------|
-| CPU          | 2     |
-| RAM          | 2 GB  |
-| NIC          | Interna (InternalNetwork) |
-| DHCP         | Automático (servidor DC) |
+| Recurso     | Valor                         |
+|-------------|-------------------------------|
+| CPU         | 2 vCPU                        |
+| RAM         | 2 GB                          |
+| NIC         | Interna (InternalNetwork)     |
+| DHCP        | Automático (via DC)           |
 
-Após configurar a rede, ingressar no domínio: `lab-ronaldo.com`.
+Depois de configurar a rede, a máquina será ingressada no domínio `lab-ronaldo.com`.
 
 ---
 
-## ⚙️ Passos para Configuração
+## ⚙️ Etapas de Configuração
 
 ### 1. Criar VMs no VirtualBox
-Configure ambas com NICs conforme diagrama.
+Configure as duas VMs com as NICs conforme o diagrama.
 
-### 2. Instalar Windows Server 2019 e Windows 10
-Configure hostname, atualizações e crie snapshots.
+### 2. Instalar os Sistemas Operacionais
+Instale o Windows Server 2019 na VM 1 e o Windows 10 na VM 2.
 
 ### 3. Configurar o Servidor como DC
+
 ```powershell
 Install-WindowsFeature AD-Domain-Services, DNS, DHCP, RemoteAccess -IncludeManagementTools
 ```
+
 ### 4. Promover o DC
-````
+
+```powershell
 Install-ADDSForest -DomainName "lab-ronaldo.com"
-````
+```
 
----
+### 5. Configurar o DHCP
 
-### 5. Configurar DHCP
-Scope: `172.16.0.100-200`
-DNS: `172.16.0.1`
-Gateway: `172.16.0.1`
+- Range: `172.16.0.100 - 172.16.0.200`
+- Gateway: `172.16.0.1`
+- DNS: `172.16.0.1`
 
-
----
-
-### 6. Configurar NAT com RRAS
-Use o assistente do "Routing and Remote Access" para ativar NAT da NIC externa para a interna.
+### 6. Configurar o NAT com RRAS
+Use o assistente do **Routing and Remote Access** e ative NAT da NIC externa para a interna.
 
 ### 7. Ingressar Cliente no Domínio
+
 No Windows 10:
 
-Sistema > Nome do Computador > Alterar > Ingressar domínio: lab-ronaldo.com
+```text
+Sistema > Nome do Computador > Alterar > Domínio: lab-ronaldo.com
+```
 
 ---
 
-### 🧪 Script PowerShell: Criar +1000 Usuários
+## 🧪 Script PowerShell - Criar 1000+ Usuários
 
+```powershell
 for ($i=1; $i -le 1000; $i++) {
     $username = "user$i"
-    New-ADUser -Name $username -SamAccountName $username -AccountPassword (ConvertTo-SecureString "P@ssword123" -AsPlainText -Force) -Enabled $true
+    New-ADUser -Name $username -SamAccountName $username `
+        -AccountPassword (ConvertTo-SecureString "P@ssword123" -AsPlainText -Force) `
+        -Enabled $true
 }
+```
 
-### 💾 Salvar como create-users.ps1 e executar no PowerShell com permissões administrativas.
+Salve como `create-users.ps1` e execute com privilégios de administrador.
 
-📘 Referências
-Documentação Microsoft AD DS
-VirtualBox Manual
-PowerShell AD Module
+---
 
-### 🔐 Segurança
-Este ambiente não é seguro para produção. Use apenas para fins educacionais em redes isoladas.
+## 📚 Referências
+
+- [Documentação Microsoft Active Directory](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/)
+- [Manual VirtualBox](https://www.virtualbox.org/manual/UserManual.html)
+- [PowerShell AD Module](https://learn.microsoft.com/en-us/powershell/module/addsadministration/?view=windowsserver2022-ps)
+
+---
+
+## 🔐 Aviso de Segurança
+
+⚠️ Este ambiente **não é seguro para produção**. Use apenas para fins **educacionais** em rede isolada.
+
+
+
